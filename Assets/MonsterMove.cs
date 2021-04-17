@@ -21,8 +21,12 @@ public class MonsterMove : MonoBehaviour {
         set { SetDestination(value);  }
     }
 
+    // Variable tracking if we can reach the destination
+    public bool canReachDestination = false;
+
     // Variable tracking whether or not we have started moving across a door link.
     bool moveAccrossLinkStarted = false;
+    
 
 
 
@@ -62,11 +66,16 @@ public class MonsterMove : MonoBehaviour {
     }
 
     /// <summary>
-    /// Updates the destination of the monster.
+    /// Updates the destination of the monster, while determining if we can reach the destination.
     /// Also positions a debugging indicator so that we can visualize the target of the monster.
     /// </summary>
-    /// <param name="dest"></param>
+    /// <param name="dest">The new location the monster should move toward</param>
     void SetDestination(Vector3 dest) {
+        // Calculate the path to the destination and figure out if we can reach it.
+        NavMeshPath path = new NavMeshPath();
+        agent.CalculatePath(dest, path);
+        canReachDestination = path.status == NavMeshPathStatus.PathComplete;
+    
         // Set the destination for the navigation agent
         agent.SetDestination(dest);
 
