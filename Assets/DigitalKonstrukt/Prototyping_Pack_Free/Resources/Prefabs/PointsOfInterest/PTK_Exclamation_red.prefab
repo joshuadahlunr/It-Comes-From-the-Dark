@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 4261437273490750}
   - component: {fileID: 33979794314663034}
   - component: {fileID: 23182701074350762}
-  - component: {fileID: 64654411171026656}
   m_Layer: 0
   m_Name: PTK_Exclamation_red
   m_TagString: Untagged
@@ -78,17 +77,3 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!64 &64654411171026656
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1726177836069590}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Convex: 0
-  m_CookingOptions: 14
-  m_Mesh: {fileID: 4300000, guid: 410f5ba8d57703d46b29bbad24c89cd4, type: 3}

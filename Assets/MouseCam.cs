@@ -28,7 +28,8 @@ public class MouseCam : MonoBehaviour
         mouseLook += smoothV;
 
         // Lock the camera so that you can't look down too far, and you can't look up to far (fixes issue with being able to look up so far the camera becomes upside down!)
-        mouseLook.y = Mathf.Clamp(mouseLook.y, -50, 90);
+        // mouseLook.y = Mathf.Clamp(mouseLook.y, -50, 90);
+        mouseLook.y = Mathf.Clamp(mouseLook.y, -90, 90);
 
         transform.localRotation = Quaternion.AngleAxis(-mouseLook.y, Vector3.right);
         character.MoveRotation(Quaternion.AngleAxis(mouseLook.x, character.transform.up));

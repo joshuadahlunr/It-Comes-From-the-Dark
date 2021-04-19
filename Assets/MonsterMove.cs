@@ -3,7 +3,6 @@
  * This file is responsible for smoothly moving the monster to a requested point.
  * NOTE: Requires that there is a NavMeshAgent component attached to the same GameObject as this script.
  */
-
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,11 +10,11 @@ using UnityEngine.AI; // NavMeshAgent
 
 public class MonsterMove : MonoBehaviour {
     // Reference to the NavigationAgent which handles the bulk of the monster's movement
-    NavMeshAgent agent;
+    public NavMeshAgent agent;
     // Reference to the debugIndicator object which we position for visualization.
     public GameObject debugIndicator;
 
-    // Vector3 representing the target that the monster is moving towards. 
+    // Vector3 representing the target that the monster is moving towards.
     public Vector3 destination {
         get { return agent.destination; }
         set { SetDestination(value);  }
@@ -26,7 +25,6 @@ public class MonsterMove : MonoBehaviour {
 
     // Variable tracking whether or not we have started moving across a door link.
     bool moveAccrossLinkStarted = false;
-    
 
 
 
@@ -36,10 +34,10 @@ public class MonsterMove : MonoBehaviour {
     void Awake() {
         // Make sure that the reference to the NavMeshAgent is set
         agent = GetComponent<NavMeshAgent>();
-        if(agent == null) 
+        if(agent == null)
             Debug.LogError("This script must be attached to an object with a NavMeshAgent attached! Not found on: " + gameObject.name);
     }
-    
+
     /// <summary>
     /// This function handles the calculations which need to be handled every frame.
     /// It manages a coroutine which handles moving the monster through doors.
@@ -52,17 +50,17 @@ public class MonsterMove : MonoBehaviour {
 
         // Debug system to set point to traverse to based on mouse click
         // Only process when the left mouse button is down.
-        if (Input.GetMouseButtonDown(0))
-        {
-            // Raycast into the scene (hiting any object) and update the destination to where we clicked
-            RaycastHit hit;
-            if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 1000))
-            {
-                Debug.Log(hit.point);
-                destination = hit.point;
-            }
-        }
-        
+        // if (Input.GetMouseButtonDown(0))
+        // {
+        //     // Raycast into the scene (hiting any object) and update the destination to where we clicked
+        //     RaycastHit hit;
+        //     if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 1000))
+        //     {
+        //         Debug.Log(hit.point);
+        //         destination = hit.point;
+        //     }
+        // }
+
     }
 
     /// <summary>
@@ -75,11 +73,11 @@ public class MonsterMove : MonoBehaviour {
         NavMeshPath path = new NavMeshPath();
         agent.CalculatePath(dest, path);
         canReachDestination = path.status == NavMeshPathStatus.PathComplete;
-    
+
         // Set the destination for the navigation agent
         agent.SetDestination(dest);
 
-        // Move the debug indicator 
+        // Move the debug indicator
         debugIndicator.transform.position = dest;
 
     }
@@ -93,7 +91,7 @@ public class MonsterMove : MonoBehaviour {
         moveAccrossLinkStarted = true;
         // Get the data from the navmesh about the door link
         OffMeshLinkData data = agent.currentOffMeshLinkData;
-        
+
         // Calculate the start and ending position of the link
         Vector3 startPos = agent.transform.position;
         Vector3 endPos = data.endPos;// + Vector3.up * agent.baseOffset;
