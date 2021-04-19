@@ -20,8 +20,8 @@ public class MonsterMove : MonoBehaviour {
         set { SetDestination(value);  }
     }
 
-    // Variable tracking if we can reach the destination
-    public bool canReachDestination = false;
+	// Variable representing how quickly the monster should traverse doorways (this is a constant slightly slower than the player's speed)
+	public float doorMovementSpeed = 1.0f;
 
     // Variable tracking whether or not we have started moving across a door link.
     bool moveAccrossLinkStarted = false;
@@ -64,16 +64,11 @@ public class MonsterMove : MonoBehaviour {
     }
 
     /// <summary>
-    /// Updates the destination of the monster, while determining if we can reach the destination.
+    /// Updates the destination of the monster.
     /// Also positions a debugging indicator so that we can visualize the target of the monster.
     /// </summary>
     /// <param name="dest">The new location the monster should move toward</param>
     void SetDestination(Vector3 dest) {
-        // Calculate the path to the destination and figure out if we can reach it.
-        NavMeshPath path = new NavMeshPath();
-        agent.CalculatePath(dest, path);
-        canReachDestination = path.status == NavMeshPathStatus.PathComplete;
-
         // Set the destination for the navigation agent
         agent.SetDestination(dest);
 
@@ -81,6 +76,17 @@ public class MonsterMove : MonoBehaviour {
         debugIndicator.transform.position = dest;
 
     }
+
+	/// <summary>
+    /// Determines if we can reach the requested destination
+    /// </summary>
+    /// <param name="dest">The new location the monster to check if we can reach.</param>
+	public bool CanReachDestination(Vector3 dest){
+		// Calculate the path to the destination and figure out if we can reach it.
+        NavMeshPath path = new NavMeshPath();
+        agent.CalculatePath(dest, path);
+        return path.status == NavMeshPathStatus.PathComplete;
+	}
 
     /// <summary>
     /// This coroutine manages the motion of the monster accross door links.
@@ -96,8 +102,7 @@ public class MonsterMove : MonoBehaviour {
         Vector3 startPos = agent.transform.position;
         Vector3 endPos = data.endPos;// + Vector3.up * agent.baseOffset;
         // Using the start and end positions calculate how long it will take (the square magnitudes are used so this is an approximation)
-        float duration = (endPos - startPos).sqrMagnitude / agent.velocity.sqrMagnitude;
-        duration *= 4; // Multiplying by 4 will slow the entity's speed down to a quarter
+		float duration = (endPos - startPos).sqrMagnitude / doorMovementSpeed / doorMovementSpeed; // Divide by doorMovementSpeed squared
 
         // Create a variable which tracks how long we have been squeezing through the door (time is scaled between 0 and 1 so that interpolations can work)
         float time = 0.0f;
