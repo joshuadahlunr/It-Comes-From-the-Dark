@@ -8,17 +8,23 @@ public class MonsterAI : MonoBehaviour
 	public Rigidbody player;
 	// Reference to the monster's movement script.
 	MonsterMove movement;
+	// Reference to the monster's audio manager
+	public MonsterAudioManager audioManager;
 	// Debug marker representing the player's predicted position
 	public GameObject debugPlayerPredictedPositionIndicator;
 
+
+	// Range of values randomly determining how long it takes for the monster to update the player's predicted position
+	public Vector2 playerLocationUpdateIntervalRange = new Vector2(4, 7);
 	// How long it should be between player location updates (when the monster doesn't have line of sight)
-	public float playerLocationUpdateInterval = 5;
+	float playerLocationUpdateInterval;
 	// How long it should be between checks for if the player is in line of sight
 	public float physicsCheckUpdateInterval = .25f;
 
 	// When the object is created get a reference to the movement script
 	void Awake() {
 		movement = GetComponent<MonsterMove>();
+		playerLocationUpdateInterval = Random.Range(playerLocationUpdateIntervalRange.x, playerLocationUpdateIntervalRange.y);
 	}
 
 
@@ -45,11 +51,21 @@ public class MonsterAI : MonoBehaviour
 			if (Physics.Raycast (transform.position, (player.transform.position + .5f * Vector3.up) - transform.position, out hit))
 				// Check if what we hit was the player.
 				playerInLineofSight = hit.transform.name == player.transform.name; // TODO: why do we have to check the transform's names, why can't we just check the transforms?
+
+			// If the player is in line of sight start fading in whispers
+			if(playerInLineofSight) audioManager.fadeInWhispers();
+			// Otherwise start fading out whispers
+			else audioManager.fadeOutWhispers();
 		}
 
 		// If the player is in line of sight or if enouph time has passed, update the player's predicted position
 		if(playerInLineofSight || timeSinceLocationUpdate >= playerLocationUpdateInterval){
 			timeSinceLocationUpdate = 0;
+			// Randomly determine how long it will take for this check to run again
+			playerLocationUpdateInterval = Random.Range(playerLocationUpdateIntervalRange.x, playerLocationUpdateIntervalRange.y);
+
+			// Play an audio cue to alert the player that their location has been tracked.
+			audioManager.playSigh();
 
 			// Calculate the player and relative velocity.
 			Vector3 playerVelocity = player.transform.position - playerPositionLastFrame;
@@ -65,6 +81,8 @@ public class MonsterAI : MonoBehaviour
 			// Update the position the monster is moving towards
 			movement.destination = new Vector3(predictedIntercept.x, player.transform.position.y, predictedIntercept.z);
 		}
+
+
 
 		// Update the variables used to calculate velocity
 		playerPositionLastFrame = player.transform.position;
