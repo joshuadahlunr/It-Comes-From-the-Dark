@@ -12,7 +12,7 @@ public class MonsterMove : MonoBehaviour {
     // Reference to the NavigationAgent which handles the bulk of the monster's movement
     public NavMeshAgent agent;
     // Reference to the debugIndicator object which we position for visualization.
-    public GameObject debugIndicator;
+    //public GameObject debugIndicator;
 
     // Vector3 representing the target that the monster is moving towards.
     public Vector3 destination {
@@ -47,20 +47,6 @@ public class MonsterMove : MonoBehaviour {
         // If we need to go through a door link (Unity "Off Mesh Link" start a coroutine to handle moving the object accross)
         if (agent.isOnOffMeshLink && !moveAccrossLinkStarted)
             StartCoroutine(MoveAcrossDoorLink());
-
-        // Debug system to set point to traverse to based on mouse click
-        // Only process when the left mouse button is down.
-        // if (Input.GetMouseButtonDown(0))
-        // {
-        //     // Raycast into the scene (hiting any object) and update the destination to where we clicked
-        //     RaycastHit hit;
-        //     if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 1000))
-        //     {
-        //         Debug.Log(hit.point);
-        //         destination = hit.point;
-        //     }
-        // }
-
     }
 
     /// <summary>
@@ -73,7 +59,7 @@ public class MonsterMove : MonoBehaviour {
         agent.SetDestination(dest);
 
         // Move the debug indicator
-        debugIndicator.transform.position = dest;
+        //debugIndicator.transform.position = dest;
 
     }
 

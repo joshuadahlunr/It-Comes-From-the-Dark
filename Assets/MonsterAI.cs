@@ -11,7 +11,7 @@ public class MonsterAI : MonoBehaviour
 	// Reference to the monster's audio manager
 	public MonsterAudioManager audioManager;
 	// Debug marker representing the player's predicted position
-	public GameObject debugPlayerPredictedPositionIndicator;
+	//public GameObject debugPlayerPredictedPositionIndicator;
 
 
 	// Range of values randomly determining how long it takes for the monster to update the player's predicted position
@@ -77,7 +77,7 @@ public class MonsterAI : MonoBehaviour
 			Vector3 predictedIntercept = player.transform.position + playerVelocity * relativeTime;
 
 			// Update the debug point
-			debugPlayerPredictedPositionIndicator.transform.position = new Vector3(predictedIntercept.x, 0, predictedIntercept.z);
+			//debugPlayerPredictedPositionIndicator.transform.position = new Vector3(predictedIntercept.x, 0, predictedIntercept.z);
 			// Update the position the monster is moving towards
 			movement.destination = new Vector3(predictedIntercept.x, player.transform.position.y, predictedIntercept.z);
 		}

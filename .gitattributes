@@ -52,3 +52,4 @@
 *.prefab linguist-generated
 *.unity linguist-generated
 Assets/Scenes/Player[[:space:]]Test/NavMesh.asset filter=lfs diff=lfs merge=lfs -text
+Assets/Scenes/HospitalLevel/NavMesh.asset filter=lfs diff=lfs merge=lfs -text
