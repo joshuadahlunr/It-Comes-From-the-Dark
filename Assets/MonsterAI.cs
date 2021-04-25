@@ -75,11 +75,12 @@ public class MonsterAI : MonoBehaviour
 			// If we can reach the player, chase the player
 			/*else*/ if(movement.CanReachDestination(player.transform.position)){
 				state = State.chasing;
+				timeSinceLocationUpdate = float.MaxValue; // Make sure that we update the player's position right away
 			// If we can't reach the player, patrol tha area around the player
 			} else if(!movement.CanReachDestination(predictedIntercept) && state != State.patroling){
 				state = State.patroling;
-				patrolRadius = initialPatrolRadius;
-				createPatrolPath();
+				patrolRadius = initialPatrolRadius; // Reset patrol radius
+				createPatrolPath(); // Create path to patrol
 			}
 
 			// Visulize the current path
@@ -188,7 +189,10 @@ public class MonsterAI : MonoBehaviour
 		// Set the monster's destination to the first point in the path (if it exists)
 		try{
 			movement.destination = patrolPoints[0];
-		} catch (System.ArgumentOutOfRangeException) { /* If points don't exist yet, that is because we are too far away from the play to have patrol points not culled for distance, so gracefully handle the error by doing nothing */ }
+		} catch (System.ArgumentOutOfRangeException) {
+			// If points don't exist yet, that is because we are too far away from the play to have patrol points not culled for distance, just make sure we are routing towards the player
+			movement.destination = player.transform.position;
+	 	}
 
 
 	}
