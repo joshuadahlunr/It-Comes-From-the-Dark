@@ -4,6 +4,13 @@ using UnityEngine;
 
 public class MonsterAI : MonoBehaviour
 {
+	enum State {
+		disabled,
+		chasing,
+		patroling
+	};
+	State state = State.chasing;
+
 	// Variable referencing the player
 	public Rigidbody player;
 	// Reference to the monster's movement script.
@@ -35,6 +42,10 @@ public class MonsterAI : MonoBehaviour
 	// Raycast catcher.
 	RaycastHit hit;
 
+	Vector3 predictedIntercept;
+
+	List<Vector3> patrolPoints = new List<Vector3>();
+
     // Update is called once per frame
     void Update()
     {
@@ -52,12 +63,88 @@ public class MonsterAI : MonoBehaviour
 				// Check if what we hit was the player.
 				playerInLineofSight = hit.transform.name == player.transform.name; // TODO: why do we have to check the transform's names, why can't we just check the transforms?
 
-			// If the player is in line of sight start fading in whispers
-			if(playerInLineofSight) audioManager.fadeInWhispers();
-			// Otherwise start fading out whispers
-			else audioManager.fadeOutWhispers();
+			if(state != State.disabled) {
+				// If the player is in line of sight start fading in whispers
+				if(playerInLineofSight) audioManager.fadeInWhispers();
+				// Otherwise start fading out whispers
+				else audioManager.fadeOutWhispers();
+			}
+
+			// if(lightsOut)
+			//	state = State.disabled;
+			// If we can reach the player, chase the player
+			/*else*/ if(movement.CanReachDestination(player.transform.position)){
+				state = State.chasing;
+			// If we can't reach the player, patrol tha area around the player
+			} else if(!movement.CanReachDestination(predictedIntercept) && state != State.patroling){
+				state = State.patroling;
+				patrolRadius = initialPatrolRadius;
+				createPatrolPath();
+			}
+
+			// Visulize the current path
+			movement.VisualizePath(movement.destination, .25f);
 		}
 
+		// Depending on our state preform a different set of actions.
+		switch(state){
+		case State.disabled:
+			break;
+		case State.chasing:
+			chasingUpdate(playerInLineofSight);
+			break;
+		case State.patroling:
+			patrolingUpdate(playerInLineofSight);
+			break;
+		}
+
+
+
+		// Update the variables used to calculate velocity
+		playerPositionLastFrame = player.transform.position;
+		monsterPositionLastFrame = transform.position;
+    }
+
+	// Variable which defines the patrol radius the monster always starts with
+	public float initialPatrolRadius = 3;
+	// Variable which defines the current patrol radius
+	float patrolRadius = 3;
+	// Variable defining how many points to generate with the patrol radius
+	public int patrolPointCount = 12;
+	// Determine how much further than the distance to the player a patrol point can be before it is ignored
+	public float patrolRadiusPathLengthCutoffRatio = 1.3f;
+
+	// Creates a path around the player for the monster to patrol
+	void createPatrolPath(){
+		// Calculate the angle between the player and the monster
+		float initialAngle = Vector3.Angle(transform.forward, player.transform.position - transform.position);
+		// Figure out the distance to the player (nav-mesh considered)
+		float distance2player = movement.DistanceAlongPath(player.transform.position);
+
+		// Play an audio cue to alert the player that they have been lost.
+		audioManager.playSigh();
+
+		// Make sure the path doesn't have any points
+		patrolPoints.Clear();
+		// Create a circle of points starting with the inital angle around the player.
+		for(float angle = initialAngle; angle < initialAngle + 360; angle += 360.0f/patrolPointCount){
+			Vector3 point = player.transform.position + -patrolRadius * new Vector3(Mathf.Cos(angle * Mathf.Deg2Rad), 0, -Mathf.Sin(angle * Mathf.Deg2Rad));
+
+			// Visualize each point
+			Debug.DrawLine(point, point + new Vector3(.1f, .1f, .1f), Color.red, 3);
+
+			if(!movement.CanReachDestination(point)) continue; // Remove unreachable points
+			if(movement.DistanceAlongPath(point) > distance2player + patrolRadius * patrolRadiusPathLengthCutoffRatio) continue; // Remove points in other rooms (or that are at least take a while to travel to)
+			patrolPoints.Add(point);
+		}
+
+		// Visualize the chosen points
+		foreach (Vector3 point in patrolPoints)
+			Debug.DrawLine(player.transform.position, point, Color.yellow, 3);
+	}
+
+	// Update method called when we are chasing the player
+	void chasingUpdate(bool playerInLineofSight){
 		// If the player is in line of sight or if enouph time has passed, update the player's predicted position
 		if(playerInLineofSight || timeSinceLocationUpdate >= playerLocationUpdateInterval){
 			timeSinceLocationUpdate = 0;
@@ -74,18 +161,35 @@ public class MonsterAI : MonoBehaviour
 			// Calculate the time it will take for the monster to catch up to the player (ignoring obstacles)
 			float relativeTime = /*relativeDistance*/(player.transform.position - transform.position).magnitude / relativeVelocity.magnitude;
 			// Calculate the point where the monster will intercept the player (ignoring obstacles)
-			Vector3 predictedIntercept = player.transform.position + playerVelocity * relativeTime;
+			predictedIntercept = player.transform.position + playerVelocity * relativeTime;
 
 			// Update the debug point
 			//debugPlayerPredictedPositionIndicator.transform.position = new Vector3(predictedIntercept.x, 0, predictedIntercept.z);
 			// Update the position the monster is moving towards
 			movement.destination = new Vector3(predictedIntercept.x, player.transform.position.y, predictedIntercept.z);
 		}
+	}
+
+	// Update method called when we are patroling around the player
+	void patrolingUpdate(bool playerInLineofSight){
+		// If the path is empty, create a new path
+		if(patrolPoints.Count == 0) createPatrolPath();
+
+		// If we have reached the current patrol point, remove it from the list (creating new path and making the radius larger if it is empty)
+		if(Vector3.Distance(transform.position, movement.destination) < .1f){
+		//if(movement.agent.isStopped){
+			patrolPoints.RemoveAt(0);
+			if(patrolPoints.Count == 0){
+				patrolRadius += .5f;
+				createPatrolPath();
+			}
+		}
+
+		// Set the monster's destination to the first point in the path (if it exists)
+		try{
+			movement.destination = patrolPoints[0];
+		} catch (System.ArgumentOutOfRangeException) { /* If points don't exist yet, that is because we are too far away from the play to have patrol points not culled for distance, so gracefully handle the error by doing nothing */ }
 
 
-
-		// Update the variables used to calculate velocity
-		playerPositionLastFrame = player.transform.position;
-		monsterPositionLastFrame = transform.position;
-    }
+	}
 }

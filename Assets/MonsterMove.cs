@@ -66,12 +66,43 @@ public class MonsterMove : MonoBehaviour {
 	/// <summary>
     /// Determines if we can reach the requested destination
     /// </summary>
-    /// <param name="dest">The new location the monster to check if we can reach.</param>
+    /// <param name="dest">The new location for the monster to check if we can reach.</param>
+	/// <return>Whether or not we can reach the target desination.</return>
 	public bool CanReachDestination(Vector3 dest){
 		// Calculate the path to the destination and figure out if we can reach it.
         NavMeshPath path = new NavMeshPath();
         agent.CalculatePath(dest, path);
         return path.status == NavMeshPathStatus.PathComplete;
+	}
+
+	/// <summary>
+    /// Determines how much distance we have to travel to get to the target
+    /// </summary>
+    /// <param name="dest">The new location for the monster to check distance to.</param>
+	/// <return>The distance along the path to the destination.</return>
+	public float DistanceAlongPath(Vector3 dest){
+		// Calculate the path
+		NavMeshPath path = new NavMeshPath();
+		agent.CalculatePath(dest, path);
+
+		// Based on the points in the path add up the distance that will be traveled.
+		float distance = 0;
+		for (int i = 0; i < path.corners.Length - 1; i++)
+			distance += Vector3.Distance(path.corners[i], path.corners[i+1]);
+		return distance;
+	}
+
+	/// <summary>
+    /// Displays the path to the destination point in the scene view.
+    /// </summary>
+    /// <param name="dest">The location for the monster to display the path to.</param>
+	public void VisualizePath(Vector3 dest, float time = 0f){
+		// Calculate the path
+		NavMeshPath path = new NavMeshPath();
+		agent.CalculatePath(dest, path);
+
+		for (int i = 0; i < path.corners.Length - 1; i++)
+			Debug.DrawLine(path.corners[i], path.corners[i + 1], Color.white, time);
 	}
 
     /// <summary>
