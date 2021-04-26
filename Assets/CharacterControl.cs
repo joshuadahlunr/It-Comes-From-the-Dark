@@ -25,11 +25,10 @@ public class CharacterControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        translation = Input.GetAxis("Vertical") * speed * Time.deltaTime;
-        strafe = Input.GetAxis("Horizontal") * speed * Time.deltaTime;
+		Vector3 move = (transform.forward * Input.GetAxis("Vertical") + transform.right * Input.GetAxis("Horizontal")).normalized * speed * Time.deltaTime;
 
         //transform.Translate(strafe, 0, translation);
-        collision.MovePosition(transform.position + transform.forward * translation + transform.right * strafe);
+        collision.MovePosition(transform.position + move);
 
 		// Update velocity
 		velocity = (transform.position - positionLastFrame) / Time.deltaTime;

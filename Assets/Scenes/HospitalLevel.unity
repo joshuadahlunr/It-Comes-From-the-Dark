@@ -5885,7 +5885,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   collision: {fileID: 266383788}
-  speed: 2.5
+  speed: 2
   velocity: {x: 0, y: 0, z: 0}
   positionLastFrame: {x: 0, y: 0, z: 0}
 --- !u!136 &266383790
@@ -19701,7 +19701,7 @@ MonoBehaviour:
   wiggler: {fileID: 1749216686}
   velocity: {x: 0, y: 0, z: 0}
   positionLastFrame: {x: 0, y: 0, z: 0}
-  doorMovementSpeed: 1.5
+  doorMovementSpeed: 1.25
 --- !u!195 &932668889
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -19712,7 +19712,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.1
-  m_Speed: 3
+  m_Speed: 2.5
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
