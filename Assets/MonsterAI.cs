@@ -22,6 +22,8 @@ public class MonsterAI : MonoBehaviour
 	// Reference to the object which holds all the nav mesh links (monster uses them to decide where to spawn.)
 	public GameObject navMeshLinks;
 
+	public GameObject particles;
+
 
 	// Range of values randomly determining how long it takes for the monster to update the player's predicted position
 	public Vector2 playerLocationUpdateIntervalRange = new Vector2(4, 7);
@@ -74,6 +76,7 @@ public class MonsterAI : MonoBehaviour
 			if(switchMgr.on){
 				state = State.disabled; // TODO: need to move monster outside playable area!
 				movement.agent.enabled = false;
+				particles.SetActive(false);
 				transform.position -= new Vector3(0, 20, 0);
 			// If we can reach the player, chase the player
 			} else if(movement.CanReachDestination(player.transform.position)){
@@ -104,6 +107,7 @@ public class MonsterAI : MonoBehaviour
 				movement.positionLastFrame = transform.position;
 				// Renable navigation
 				movement.agent.enabled = true;
+				particles.SetActive(true);
 			}
 
 			// Visulize the current path
