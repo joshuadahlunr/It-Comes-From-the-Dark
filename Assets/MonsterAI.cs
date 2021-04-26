@@ -9,7 +9,7 @@ public class MonsterAI : MonoBehaviour
 		chasing,
 		patroling
 	};
-	State state = State.chasing;
+	State state = State.disabled;
 
 	// Variable referencing the player
 	public Rigidbody player;
@@ -19,6 +19,8 @@ public class MonsterAI : MonoBehaviour
 	public MonsterAudioManager audioManager;
 	// Debug marker representing the player's predicted position
 	//public GameObject debugPlayerPredictedPositionIndicator;
+
+	public SpawnSwitches switchMgr;
 
 
 	// Range of values randomly determining how long it takes for the monster to update the player's predicted position
@@ -70,14 +72,17 @@ public class MonsterAI : MonoBehaviour
 				else audioManager.fadeOutWhispers();
 			}
 
-			// if(lightsOut)
-			//	state = State.disabled;
+			if(switchMgr.on){
+				state = State.disabled; // TODO: need to move monster outside playable area!
+				movement.agent.enabled = false;
 			// If we can reach the player, chase the player
-			/*else*/ if(movement.CanReachDestination(player.transform.position)){
+			} else if(movement.CanReachDestination(player.transform.position)){
+				movement.agent.enabled = true;
 				state = State.chasing;
 				timeSinceLocationUpdate = float.MaxValue; // Make sure that we update the player's position right away
 			// If we can't reach the player, patrol tha area around the player
 			} else if(!movement.CanReachDestination(predictedIntercept) && state != State.patroling){
+				movement.agent.enabled = true;
 				state = State.patroling;
 				patrolRadius = initialPatrolRadius; // Reset patrol radius
 				createPatrolPath(); // Create path to patrol
