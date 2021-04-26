@@ -9,7 +9,7 @@ public class MonsterAI : MonoBehaviour
 		chasing,
 		patroling
 	};
-	State state = State.disabled;
+	State state = State.chasing;
 
 	// Variable referencing the player
 	public Rigidbody player;
@@ -17,10 +17,10 @@ public class MonsterAI : MonoBehaviour
 	MonsterMove movement;
 	// Reference to the monster's audio manager
 	public MonsterAudioManager audioManager;
-	// Debug marker representing the player's predicted position
-	//public GameObject debugPlayerPredictedPositionIndicator;
-
+	// Reference to the switch manager
 	public SpawnSwitches switchMgr;
+	// Reference to the object which holds all the nav mesh links (monster uses them to decide where to spawn.)
+	public GameObject navMeshLinks;
 
 
 	// Range of values randomly determining how long it takes for the monster to update the player's predicted position
@@ -36,16 +36,13 @@ public class MonsterAI : MonoBehaviour
 		playerLocationUpdateInterval = Random.Range(playerLocationUpdateIntervalRange.x, playerLocationUpdateIntervalRange.y);
 	}
 
-
-	// Variables tracking the player and monster's location between frames for velocity calculations. (Some of the custom movement code breaks the built in velocity calculations)
-	Vector3 playerPositionLastFrame, monsterPositionLastFrame;
 	// Timers tracking when locations and line of sight checks should be updated
 	float timeSinceLocationUpdate = float.MaxValue, timeSinceLastPhysicsCheck = float.MaxValue;
 	// Raycast catcher.
 	RaycastHit hit;
-
+	// The location where we predict the player will be
 	Vector3 predictedIntercept;
-
+	// The path the monster will patrol.
 	List<Vector3> patrolPoints = new List<Vector3>();
 
     // Update is called once per frame
@@ -72,20 +69,41 @@ public class MonsterAI : MonoBehaviour
 				else audioManager.fadeOutWhispers();
 			}
 
+			State lastState = state; // Keep track of the state before we transition, logic needs to hapen if we transition out of disabled.
+			// If the lights are on, the monster is disabled
 			if(switchMgr.on){
 				state = State.disabled; // TODO: need to move monster outside playable area!
 				movement.agent.enabled = false;
+				transform.position -= new Vector3(0, 20, 0);
 			// If we can reach the player, chase the player
 			} else if(movement.CanReachDestination(player.transform.position)){
-				movement.agent.enabled = true;
 				state = State.chasing;
 				timeSinceLocationUpdate = float.MaxValue; // Make sure that we update the player's position right away
 			// If we can't reach the player, patrol tha area around the player
 			} else if(!movement.CanReachDestination(predictedIntercept) && state != State.patroling){
-				movement.agent.enabled = true;
 				state = State.patroling;
 				patrolRadius = initialPatrolRadius; // Reset patrol radius
 				createPatrolPath(); // Create path to patrol
+			}
+
+			// If we are transitioning from disabled to one of the other states, we need to move the monster back into the playable area
+			if(lastState == State.disabled && state != lastState){
+				// Find the nav-mesh link furthest away from the player
+				float maxDistSqr = 0;
+				Transform newSpawn = null;
+				foreach (Transform child in navMeshLinks.transform){
+					float distSqr = (child.position - player.transform.position).sqrMagnitude;
+					if(distSqr > maxDistSqr){
+						maxDistSqr = distSqr;
+						newSpawn = child;
+					}
+				}
+
+				// Move the monster to the furthest link from the player
+				transform.position = newSpawn.position;
+				movement.positionLastFrame = transform.position;
+				// Renable navigation
+				movement.agent.enabled = true;
 			}
 
 			// Visulize the current path
@@ -103,12 +121,6 @@ public class MonsterAI : MonoBehaviour
 			patrolingUpdate(playerInLineofSight);
 			break;
 		}
-
-
-
-		// Update the variables used to calculate velocity
-		playerPositionLastFrame = player.transform.position;
-		monsterPositionLastFrame = transform.position;
     }
 
 	// Variable which defines the patrol radius the monster always starts with
@@ -160,14 +172,12 @@ public class MonsterAI : MonoBehaviour
 			// Play an audio cue to alert the player that their location has been tracked.
 			audioManager.playSigh();
 
-			// Calculate the player and relative velocity.
-			Vector3 playerVelocity = player.transform.position - playerPositionLastFrame;
-			Vector3 relativeVelocity = playerVelocity - /*monsterVelocity*/(transform.position - monsterPositionLastFrame);
-
+			// Calculate the relative velocity.
+			Vector3 relativeVelocity = player.velocity - /*monsterVelocity*/movement.velocity;
 			// Calculate the time it will take for the monster to catch up to the player (ignoring obstacles)
 			float relativeTime = /*relativeDistance*/(player.transform.position - transform.position).magnitude / relativeVelocity.magnitude;
 			// Calculate the point where the monster will intercept the player (ignoring obstacles)
-			predictedIntercept = player.transform.position + playerVelocity * relativeTime;
+			predictedIntercept = player.transform.position + player.velocity * relativeTime;
 
 			// Update the debug point
 			//debugPlayerPredictedPositionIndicator.transform.position = new Vector3(predictedIntercept.x, 0, predictedIntercept.z);

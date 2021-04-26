@@ -5886,6 +5886,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   collision: {fileID: 266383788}
   speed: 2.5
+  velocity: {x: 0, y: 0, z: 0}
+  positionLastFrame: {x: 0, y: 0, z: 0}
 --- !u!136 &266383790
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -6912,7 +6914,7 @@ MonoBehaviour:
     type: 3}
   lights: {fileID: 136381939}
   numSwitches: 10
-  timeOn: 30
+  timeOn: 15
   on: 1
 --- !u!1001 &316864567
 PrefabInstance:
@@ -19673,6 +19675,7 @@ MonoBehaviour:
   player: {fileID: 266383788}
   audioManager: {fileID: 1827090128}
   switchMgr: {fileID: 314619102}
+  navMeshLinks: {fileID: 176850026}
   playerLocationUpdateIntervalRange: {x: 4, y: 7}
   physicsCheckUpdateInterval: 0.25
   initialPatrolRadius: 3
@@ -19691,7 +19694,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   agent: {fileID: 932668889}
-  doorMovementSpeed: 2
+  velocity: {x: 0, y: 0, z: 0}
+  positionLastFrame: {x: 0, y: 0, z: 0}
+  doorMovementSpeed: 1.5
 --- !u!195 &932668889
 NavMeshAgent:
   m_ObjectHideFlags: 0

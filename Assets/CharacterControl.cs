@@ -10,6 +10,11 @@ public class CharacterControl : MonoBehaviour
     private float translation;
     private float strafe;
 
+	// Variable tracking the players's current velocity
+	public Vector3 velocity;
+	// Variable tracking the player's position last frame for velocity calculations
+    public Vector3 positionLastFrame;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -25,5 +30,10 @@ public class CharacterControl : MonoBehaviour
 
         //transform.Translate(strafe, 0, translation);
         collision.MovePosition(transform.position + transform.forward * translation + transform.right * strafe);
+
+		// Update velocity
+		velocity = (transform.position - positionLastFrame) / Time.deltaTime;
+		// Save character's position
+		positionLastFrame = transform.position;
     }
 }

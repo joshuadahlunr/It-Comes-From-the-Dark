@@ -1,4 +1,4 @@
-﻿/*
+/*
  * MonsterMove.cs
  * This file is responsible for smoothly moving the monster to a requested point.
  * NOTE: Requires that there is a NavMeshAgent component attached to the same GameObject as this script.
@@ -19,6 +19,11 @@ public class MonsterMove : MonoBehaviour {
         get { return agent.destination; }
         set { SetDestination(value);  }
     }
+
+	// Variable tracking the monster's current velocity
+	public Vector3 velocity;
+	// Variable tracking the monster's position last frame (used for velocity calculations)
+	public Vector3 positionLastFrame;
 
 	// Variable representing how quickly the monster should traverse doorways (this is a constant slightly slower than the player's speed)
 	public float doorMovementSpeed = 1.0f;
@@ -47,6 +52,11 @@ public class MonsterMove : MonoBehaviour {
         // If we need to go through a door link (Unity "Off Mesh Link" start a coroutine to handle moving the object accross)
         if (agent.isOnOffMeshLink && !moveAccrossLinkStarted)
             StartCoroutine(MoveAcrossDoorLink());
+
+		// Update velocity
+		velocity = (transform.position - positionLastFrame) / Time.deltaTime;
+		// Save monster's position
+		positionLastFrame = transform.position;
     }
 
     /// <summary>
@@ -69,6 +79,8 @@ public class MonsterMove : MonoBehaviour {
     /// <param name="dest">The new location for the monster to check if we can reach.</param>
 	/// <return>Whether or not we can reach the target desination.</return>
 	public bool CanReachDestination(Vector3 dest){
+		if(!agent.enabled) return false;
+
 		// Calculate the path to the destination and figure out if we can reach it.
         NavMeshPath path = new NavMeshPath();
         agent.CalculatePath(dest, path);
@@ -81,6 +93,8 @@ public class MonsterMove : MonoBehaviour {
     /// <param name="dest">The new location for the monster to check distance to.</param>
 	/// <return>The distance along the path to the destination.</return>
 	public float DistanceAlongPath(Vector3 dest){
+		if(!agent.enabled) return System.Single.PositiveInfinity;
+
 		// Calculate the path
 		NavMeshPath path = new NavMeshPath();
 		agent.CalculatePath(dest, path);
@@ -97,6 +111,8 @@ public class MonsterMove : MonoBehaviour {
     /// </summary>
     /// <param name="dest">The location for the monster to display the path to.</param>
 	public void VisualizePath(Vector3 dest, float time = 0f){
+		if(!agent.enabled) return;
+
 		// Calculate the path
 		NavMeshPath path = new NavMeshPath();
 		agent.CalculatePath(dest, path);
