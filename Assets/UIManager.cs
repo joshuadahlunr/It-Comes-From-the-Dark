@@ -8,6 +8,11 @@ public class UIManager : MonoBehaviour
 
     public GameObject recPanel;
     public Text timePanel;
+    public List<Image> noisePanel;
+    public GameObject player;
+    public GameObject monster;
+    public SpawnSwitches spawnSwitches;
+    public int noiseAmount;
     float timePassed = 0;
 
     // Start is called before the first frame update
@@ -19,6 +24,9 @@ public class UIManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+        // Time Panel
+
         timePassed += Time.deltaTime;
         timePanel.text = timePassed.ToString();
 
@@ -34,6 +42,29 @@ public class UIManager : MonoBehaviour
 
         timePanel.text = hours + ":" + minutes + ":" + seconds + ":" + ms;
 
+        // Record Panel
+
         recPanel.SetActive(int.Parse(ms) > 15);
+
+        // Noise Panel
+        if (int.Parse(ms) % 1 == 0)
+        {
+            for (int i = 0; i < noisePanel.Count; i++)
+            {
+                noisePanel[i].color = new Color32(255, 255, 255, 0);
+            }
+
+            float dist = Vector3.Distance(player.transform.position,monster.transform.position);
+            noiseAmount = 100;
+            if (!spawnSwitches.on)
+            {
+                noiseAmount = (int)(255.0f - 10.0f * dist);
+                noiseAmount = Mathf.Max(100, noiseAmount);
+            }
+            int panelforfun = (int)((Random.value * 8) % 8);
+            noisePanel[panelforfun].color = new Color32(64, 64, 64, (byte)noiseAmount);
+            noisePanel[panelforfun].transform.localRotation = Quaternion.Euler(0, (Random.value > 0.5 ? 180 : 0), 0);
+            noisePanel[panelforfun].transform.localRotation = Quaternion.Euler((Random.value > 0.5 ? 180 : 0), 0, 0);
+        }
     }
 }
