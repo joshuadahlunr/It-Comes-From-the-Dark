@@ -4,23 +4,27 @@ using UnityEngine;
 
 public class MouseCam : MonoBehaviour
 {
+	public static MouseCam inst; // Singleton object
+
     [SerializeField] // Why do the fields need to be seralized whent they are public intrinsic types?
     public float sensitivity = 5.0f;
     [SerializeField]
     public float smoothing = 2.0f;
-    public Rigidbody character;
 	public AudioSource audioSource;
     private Vector2 mouseLook;
     private Vector2 smoothV;
 
 	// Variable defining the default camera height
 	public float cameraHeight = 1.1f;
+	// How much the camera bob is scaled by
+	public float bobIntensity = .025f;
+	// How often a footstep will occure
+	public float footstepInterval = 2;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        character = this.transform.parent.gameObject.GetComponent<Rigidbody>();
-    }
+	void Awake(){
+		inst = this; // Setup singleton
+	}
+
 
 	// Variable storing the position last frame for displacement calculations
 	Vector3 positionLastFrame;
@@ -40,16 +44,14 @@ public class MouseCam : MonoBehaviour
 
         // Lock the camera so that you can't look down too far, and you can't look up to far (fixes issue with being able to look up so far the camera becomes upside down!)
         mouseLook.y = Mathf.Clamp(mouseLook.y, -50, 90);
-        // mouseLook.y = Mathf.Clamp(mouseLook.y, -90, 90);
 
         transform.localRotation = Quaternion.AngleAxis(-mouseLook.y, Vector3.right);
-        character.MoveRotation(Quaternion.AngleAxis(mouseLook.x, character.transform.up));
-        //character.transform.localRotation = Quaternion.AngleAxis(mouseLook.x, character.transform.up);
+        CharacterControl.inst.collision.MoveRotation(Quaternion.AngleAxis(mouseLook.x, CharacterControl.inst.transform.up));
 
 		// Cacluate total distance the player has traveled so far
 		displacement += (transform.position - positionLastFrame).magnitude; // TODO: moving at a diagonal makes this go up quite a bit faster... not sure how to fix that
 		// Calculate how much the view should bob, and then make it bob that much
-		float heightModulation = .025f * Mathf.Sin(4 * displacement);
+		float heightModulation = bobIntensity * Mathf.Sin(Mathf.PI / footstepInterval * displacement);
 		transform.localPosition = new Vector3(0, cameraHeight + heightModulation, 0);
 		// If we are at a rising point in the footsteps, and a footstep isn't playing, and enouph of the cycle has passed that we can play another footstep...
 		if(heightModulation > 0 && !audioSource.isPlaying && canPlayFootstepAgain){
