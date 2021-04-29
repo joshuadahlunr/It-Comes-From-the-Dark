@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class CharacterControl : MonoBehaviour
 {
-    CharacterController characterController; // Why is this needed?
+    public static CharacterControl inst; // Singleton object
+
     public Rigidbody collision;
     public float speed = 0.5f;
     private float translation;
@@ -15,10 +16,13 @@ public class CharacterControl : MonoBehaviour
 	// Variable tracking the player's position last frame for velocity calculations
     public Vector3 positionLastFrame;
 
+	void Awake(){
+		inst = this; // Setup singleton
+	}
+
     // Start is called before the first frame update
     void Start()
     {
-        characterController = GetComponent<CharacterController>(); // Why is this needed?
         collision = GetComponent<Rigidbody>();
     }
 

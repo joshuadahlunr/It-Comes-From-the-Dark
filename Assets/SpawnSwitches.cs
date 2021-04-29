@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class SpawnSwitches : MonoBehaviour
 {
+	public static SpawnSwitches inst; // Singleton object
+
     public GameObject[] SpawnPoints;
     public GameObject Switches;
 
@@ -15,6 +17,10 @@ public class SpawnSwitches : MonoBehaviour
     public bool on = true;
 
     //SphereCollider switchCollider;
+
+	void Awake(){
+		inst = this; // Setup singleton
+	}
 
     // Start is called before the first frame update
     void Start()

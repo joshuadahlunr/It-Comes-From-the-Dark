@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
+	public static UIManager inst; // Singleton object
 
     public GameObject recPanel;
     public Text timePanel;
@@ -15,11 +16,9 @@ public class UIManager : MonoBehaviour
     public int noiseAmount;
     float timePassed = 0;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+	void Awake() {
+		inst = this; // Setup the singleton
+	}
 
     // Update is called once per frame
     void Update()

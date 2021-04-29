@@ -5,6 +5,8 @@ using UnityEngine.Audio;
 
 public class MonsterAudioManager : MonoBehaviour
 {
+	public static MonsterAudioManager inst; // Singleton object
+
 	// Audio Sources for the whispers and sighs
     public AudioSource whisperSource;
 	public AudioSource sighSource;
@@ -18,6 +20,10 @@ public class MonsterAudioManager : MonoBehaviour
 	public float maxWhisperVolume = .8f;
 	// The desired volume of the whispers we are shifting towards
 	float desiredWhisperVolume = 0;
+
+	void Awake(){
+		inst = this; // Setup singleton
+	}
 
     // Update is called once per frame, updates the volume of the whispers towards the desired volum
     void Update()

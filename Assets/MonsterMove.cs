@@ -9,6 +9,8 @@ using UnityEngine;
 using UnityEngine.AI; // NavMeshAgent
 
 public class MonsterMove : MonoBehaviour {
+	public static MonsterMove inst; // Singleton object
+
     // Reference to the NavigationAgent which handles the bulk of the monster's movement
     public NavMeshAgent agent;
     // Reference to the debugIndicator object which we position for visualization.
@@ -38,6 +40,8 @@ public class MonsterMove : MonoBehaviour {
     /// Function which runs when the object is created, and assigns some nessicary references.
     /// </summary>
     void Awake() {
+		inst = this; // Setup singleton
+
         // Make sure that the reference to the NavMeshAgent is set
         agent = GetComponent<NavMeshAgent>();
         if(agent == null)
