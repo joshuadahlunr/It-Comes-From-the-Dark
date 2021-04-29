@@ -54,11 +54,25 @@ public class SpawnSwitches : MonoBehaviour
 		}
     }
 
+	// Function which determines if the provided switch spawn point has line of sight to any other spawned switch
+	bool inLineofSightofAny(int spawnIndex){
+		RaycastHit hit;
+		foreach(int i in spawnedSwitches)
+			// Cast a ray from the spawn location in the direction of each other spawn point
+			if(Physics.Raycast(SpawnPoints[spawnIndex].transform.position, SpawnPoints[i].transform.position - SpawnPoints[spawnIndex].transform.position, out hit, 20)){
+				// If it hits a switch, then we are in line of sight
+				if(hit.transform.tag == "Switch")
+					return true;
+			}
+		// If we didn't hit any swicthes then we are not in line of sight
+		return false;
+	}
 
     void Spawn()
     {
         int spawnIndex = Random.Range(0, SpawnPoints.Length); // generate random array number
-        while(spawnedSwitches.Contains(spawnIndex)) spawnIndex = Random.Range(0, SpawnPoints.Length); // Make sure the random number hasn't already been choosen
+		// Make sure the random number hasn't already been choosen (and that it isn't in line of sight with another already spawned switch)
+        while(spawnedSwitches.Contains(spawnIndex) || inLineofSightofAny(spawnIndex)) spawnIndex = Random.Range(0, SpawnPoints.Length);
         spawnedSwitches.Add(spawnIndex);
 
 		// Update the spawn point to now reference the instantiated switch!
@@ -67,6 +81,7 @@ public class SpawnSwitches : MonoBehaviour
 		SphereCollider switchCollider = SpawnPoints[spawnIndex].AddComponent<SphereCollider>() as SphereCollider; // create appropriate collider
         switchCollider.radius = .2f; // make the collider larger so player can interact
 		switchCollider.isTrigger = true; // make the collider not collide but just register that the player is inside of it
+		switchCollider.tag = "Switch"; // mark the collider as a switch
     }
 
     float timer = 0; // TODO... we have a game timer score, we could use that instead?
