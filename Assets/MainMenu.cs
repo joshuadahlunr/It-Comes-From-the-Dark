@@ -9,11 +9,13 @@ public class MainMenu : MonoBehaviour
     // Start is called before the first frame update
 
     public Button startGameButton;
+    public Button quitGameButton;
 
 
     void Start()
     {
-        startGameButton.onClick.AddListener(OnClick);
+        startGameButton.onClick.AddListener(OnStartClick);
+        quitGameButton.onClick.AddListener(OnQuitClick);
     }
 
     // Update is called once per frame
@@ -23,8 +25,13 @@ public class MainMenu : MonoBehaviour
 
     }
 
-    void OnClick()
+    void OnStartClick()
     {
         SceneManager.LoadScene("HospitalLevel", LoadSceneMode.Single);
+    }
+
+    void OnQuitClick()
+    {
+        Application.Quit();
     }
 }
