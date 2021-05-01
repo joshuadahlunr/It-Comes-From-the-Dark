@@ -16,7 +16,9 @@ public class UIManager : MonoBehaviour
     public int noiseAmount;
     float timePassed = 0;
 
-	void Awake() {
+    public GameplayManager gpManager;
+
+    void Awake() {
 		inst = this; // Setup the singleton
 	}
 
@@ -26,8 +28,8 @@ public class UIManager : MonoBehaviour
 
         // Time Panel
 
-        timePassed += Time.deltaTime;
-        timePanel.text = timePassed.ToString();
+        timePassed = gpManager.getTime();
+        //timePanel.text = timePassed.ToString();
 
         string hours = ((int)timePassed / 3600).ToString();
         string minutes = ((int)timePassed / 60).ToString();
@@ -53,7 +55,7 @@ public class UIManager : MonoBehaviour
                 noisePanel[i].color = new Color32(255, 255, 255, 0);
             }
 
-            float dist = Vector3.Distance(player.transform.position,monster.transform.position);
+            float dist = 
             noiseAmount = 100;
             if (!spawnSwitches.on)
             {
