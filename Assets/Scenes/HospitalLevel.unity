@@ -5910,7 +5910,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 266383787}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.0133991, z: 3.6923914}
+  m_LocalPosition: {x: 0, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 848139144}
@@ -18585,6 +18585,7 @@ MonoBehaviour:
   sensitivity: 5
   smoothing: 2
   audioSource: {fileID: 1810294892}
+  mouseLook: {x: 0, y: 0}
   cameraHeight: 1.1
   bobIntensity: 0.02
   footstepInterval: 0.75

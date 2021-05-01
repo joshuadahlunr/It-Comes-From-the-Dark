@@ -11,7 +11,7 @@ public class MouseCam : MonoBehaviour
     [SerializeField]
     public float smoothing = 2.0f;
 	public AudioSource audioSource;
-    private Vector2 mouseLook;
+    public Vector2 mouseLook;
     private Vector2 smoothV;
 
 	// Variable defining the default camera height

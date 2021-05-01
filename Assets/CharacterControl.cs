@@ -24,14 +24,17 @@ public class CharacterControl : MonoBehaviour
     void Start()
     {
         collision = GetComponent<Rigidbody>();
+		// Spawn the player in a random position (on the navmesh) around the center of the map
+		collision.MovePosition(Utility.randomNavmeshLocation(new Vector3(20, 0, 20), 20));
+		// The player spawns facing in a random direction
+		MouseCam.inst.mouseLook.x = Random.Range(0f, 360f);
+
     }
 
     // Update is called once per frame
     void Update()
     {
 		Vector3 move = (transform.forward * Input.GetAxis("Vertical") + transform.right * Input.GetAxis("Horizontal")).normalized * speed * Time.deltaTime;
-
-        //transform.Translate(strafe, 0, translation);
         collision.MovePosition(transform.position + move);
 
 		// Update velocity
