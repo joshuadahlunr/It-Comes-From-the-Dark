@@ -11,6 +11,7 @@ public class MouseCam : MonoBehaviour
     [SerializeField]
     public float smoothing = 2.0f;
 	public AudioSource audioSource;
+	DeferredNightVisionEffect nightVision;
     public Vector2 mouseLook;
     private Vector2 smoothV;
 
@@ -23,6 +24,10 @@ public class MouseCam : MonoBehaviour
 
 	void Awake(){
 		inst = this; // Setup singleton
+	}
+
+	void Start(){
+		nightVision = GetComponent<DeferredNightVisionEffect>() as DeferredNightVisionEffect;
 	}
 
 
@@ -47,6 +52,12 @@ public class MouseCam : MonoBehaviour
 
         transform.localRotation = Quaternion.AngleAxis(-mouseLook.y, Vector3.right);
         CharacterControl.inst.collision.MoveRotation(Quaternion.AngleAxis(mouseLook.x, CharacterControl.inst.transform.up));
+
+		// If the right mouse button is held down, enable night vision
+		if(Input.GetMouseButton(1)){
+			nightVision.enabled = true;
+			// TODO: tick down a battery counter
+		} else nightVision.enabled = false;
 
 		// Cacluate total distance the player has traveled so far
 		displacement += (transform.position - positionLastFrame).magnitude; // TODO: moving at a diagonal makes this go up quite a bit faster... not sure how to fix that
