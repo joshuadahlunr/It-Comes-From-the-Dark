@@ -15,7 +15,7 @@ public class DeathMenu : MonoBehaviour
     public GameplayManager gpManager;
 
 
-    void Awake()
+    void OnEnable()
     {
         returnMenuButton.onClick.AddListener(OnReturnClick);
         quitGameButton.onClick.AddListener(OnQuitClick);
