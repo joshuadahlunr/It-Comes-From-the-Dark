@@ -34,7 +34,7 @@ public class SpawnSwitches : MonoBehaviour
         }
     }
 
-    List<int> spawnedSwitches = new List<int>();
+    public List<int> spawnedSwitches = new List<int>();
 
     // Update is called once per frame
     void Update()
@@ -54,6 +54,8 @@ public class SpawnSwitches : MonoBehaviour
                         switchSource.Play();
 						// Add batteries to the level to replace the ones the player picked up in the last cycle
 						BatterySpawn.inst.Respawn();
+						// Rearanged the doors
+						DoorSpawner.inst.Respawn();
 					}
 				}
 			}
