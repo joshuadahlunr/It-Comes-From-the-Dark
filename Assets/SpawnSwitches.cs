@@ -52,6 +52,8 @@ public class SpawnSwitches : MonoBehaviour
 						on = true;
 						lights.SetActive(true);
                         switchSource.Play();
+						// Add batteries to the level to replace the ones the player picked up in the last cycle
+						BatterySpawn.inst.Respawn();
 					}
 				}
 			}
