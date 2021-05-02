@@ -11,6 +11,9 @@ public class SpawnSwitches : MonoBehaviour
 
     public GameObject lights;
 
+    public AudioSource switchSource;
+    public AudioSource offSource;
+
     public int numSwitches = 5;
     public float timeOn = 30;
 
@@ -40,7 +43,7 @@ public class SpawnSwitches : MonoBehaviour
 		if(on) LightLogic();
 
 		// For each switch check if the player is interacting with it!
-		if (Input.GetKey(KeyCode.E)){
+		if (Input.GetKeyUp(KeyCode.E)){
 	        for (int i = 0; i < numSwitches; i++){
 				// TODO: This isn't a great solution... but I'm tired (it can be made a lot better!)
 				Collider[] thingsInBounds = Physics.OverlapSphere(SpawnPoints[spawnedSwitches[i]].transform.position, 1);
@@ -48,6 +51,7 @@ public class SpawnSwitches : MonoBehaviour
 					if(thing.tag == "Player"){
 						on = true;
 						lights.SetActive(true);
+                        switchSource.Play();
 					}
 				}
 			}
@@ -93,6 +97,7 @@ public class SpawnSwitches : MonoBehaviour
 		if(timer > timeOn){
 			on = false;
 			lights.SetActive(false);
+            offSource.Play();
 			timer = 0;
 		}
     }
