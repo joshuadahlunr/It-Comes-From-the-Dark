@@ -53,10 +53,10 @@ public class MouseCam : MonoBehaviour
         transform.localRotation = Quaternion.AngleAxis(-mouseLook.y, Vector3.right);
         CharacterControl.inst.collision.MoveRotation(Quaternion.AngleAxis(mouseLook.x, CharacterControl.inst.transform.up));
 
-		// If the right mouse button is held down, enable night vision
-		if(Input.GetMouseButton(1)){
+		// If the right mouse button is held down (and we have battery charge left), enable night vision
+		if(Input.GetMouseButton(1) && CharacterControl.inst.batteryCharge > 0){
 			nightVision.enabled = true;
-			// TODO: tick down a battery counter
+			CharacterControl.inst.batteryCharge -= Time.deltaTime / 3; // Tick down the charge with time
 		} else nightVision.enabled = false;
 
 		// Cacluate total distance the player has traveled so far

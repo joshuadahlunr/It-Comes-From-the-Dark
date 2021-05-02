@@ -10,9 +10,12 @@ public class UIManager : MonoBehaviour
     public GameObject recPanel;
     public Text timePanel;
     public List<Image> noisePanel;
-    public GameObject player;
-    public GameObject monster;
-    public SpawnSwitches spawnSwitches;
+	public List<Sprite> batteryLevels;
+	public Text batteryText;
+	public Image batteryChargeIndicator;
+    //public GameObject player;
+    //public GameObject monster;
+    //public SpawnSwitches spawnSwitches;
     public int noiseAmount;
     float timePassed = 0;
 
@@ -55,9 +58,9 @@ public class UIManager : MonoBehaviour
                 noisePanel[i].color = new Color32(255, 255, 255, 0);
             }
 
-            float dist = 
+            float dist =
             noiseAmount = 100;
-            if (!spawnSwitches.on)
+            if (!SpawnSwitches.inst.on)
             {
                 noiseAmount = (int)(255.0f - 10.0f * dist);
                 noiseAmount = Mathf.Max(100, noiseAmount);
@@ -67,5 +70,20 @@ public class UIManager : MonoBehaviour
             noisePanel[panelforfun].transform.localRotation = Quaternion.Euler(0, (Random.value > 0.5 ? 180 : 0), 0);
             noisePanel[panelforfun].transform.localRotation = Quaternion.Euler((Random.value > 0.5 ? 180 : 0), 0, 0);
         }
+
+		// Battery Panel
+		batteryText.text = ((int)CharacterControl.inst.batteryCharge).ToString();
+		// Swap out the image based on how much of the current battery is left
+		float charge = CharacterControl.inst.batteryCharge - (int)CharacterControl.inst.batteryCharge;
+		int spriteIndex = 5;
+		if(charge > .99) spriteIndex = 5;
+		else if(charge > .8) spriteIndex = 4;
+		else if(charge > .6) spriteIndex = 3;
+		else if(charge > .4) spriteIndex = 2;
+		else if(charge > .2) spriteIndex = 1;
+		else if(CharacterControl.inst.batteryCharge <= .2) spriteIndex = 0;
+		batteryChargeIndicator.sprite = batteryLevels[spriteIndex];
+
+
     }
 }
