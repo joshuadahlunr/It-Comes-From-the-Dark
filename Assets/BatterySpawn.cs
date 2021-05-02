@@ -29,7 +29,7 @@ public class BatterySpawn : MonoBehaviour
 		if (Input.GetKeyUp(KeyCode.E)){
 			foreach (Transform child in transform){
 				// TODO: This isn't a great solution... but I'm tired (it can be made a lot better!)
-				Collider[] thingsInBounds = Physics.OverlapSphere(child.position, 1);
+				Collider[] thingsInBounds = Physics.OverlapSphere(child.position, 1.5f);
 				foreach(Collider thing in thingsInBounds){
 					// If the player is close to the battery and pressing E
 					if(thing.tag == "Player"){
