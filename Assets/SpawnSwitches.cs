@@ -54,7 +54,7 @@ public class SpawnSwitches : MonoBehaviour
                         switchSource.Play();
 						// Add batteries to the level to replace the ones the player picked up in the last cycle
 						BatterySpawn.inst.Respawn();
-						// Rearanged the doors
+						// Rearange the doors
 						DoorSpawner.inst.Respawn();
 					}
 				}
