@@ -8,6 +8,7 @@ public class SpawnSwitches : MonoBehaviour
 
     public GameObject[] SpawnPoints;
     public GameObject Switches;
+    public GameObject SwitchLight;
 
     public GameObject lights;
 
@@ -85,6 +86,7 @@ public class SpawnSwitches : MonoBehaviour
 
 		// Update the spawn point to now reference the instantiated switch!
         SpawnPoints[spawnIndex] = Instantiate(Switches, SpawnPoints[spawnIndex].transform.position, SpawnPoints[spawnIndex].transform.rotation, SpawnPoints[spawnIndex].transform);
+        SpawnPoints[spawnIndex] = Instantiate(SwitchLight, SpawnPoints[spawnIndex].transform.position, SpawnPoints[spawnIndex].transform.rotation, SpawnPoints[spawnIndex].transform);
 		// TODO: This isn't currently used... but it will probably be usefull with a better solution to the "is the player interacting with switch" problem.
 		SphereCollider switchCollider = SpawnPoints[spawnIndex].AddComponent<SphereCollider>() as SphereCollider; // create appropriate collider
         switchCollider.radius = .2f; // make the collider larger so player can interact
