@@ -6,18 +6,33 @@ public class SpawnSwitches : MonoBehaviour
 {
 	public static SpawnSwitches inst; // Singleton object
 
+	// List of possible locations switches can spawn in
     public GameObject[] SpawnPoints;
+	// Prefab representing the switches which we instantiate
     public GameObject switchPrefab;
 
+	// The object containing all of the lights
     public GameObject lights;
 
+	// Audio sources
     public AudioSource switchSource;
     public AudioSource offSource;
 
+	// The number of switches to spawn
     public int numSwitches = 5;
+	// The time lights will remain on
     public float timeOn = 30;
 
+	// Variable representing if the lights are on or off
     public bool on = true;
+
+	// List of indexes in SpawnPoints that represent spawned switches
+	public List<int> spawnedSwitches = new List<int>();
+
+	// Variable tracking how many switches must be activated before a switch can be used again.
+	public int switchesBetweenUse = 3;
+	// Queue tracking the switches that have been recently activated
+	public Queue<Transform> activatedSwitches = new Queue<Transform>();
 
 	void Awake(){
 		inst = this; // Setup singleton
@@ -32,7 +47,7 @@ public class SpawnSwitches : MonoBehaviour
         }
     }
 
-    public List<int> spawnedSwitches = new List<int>();
+
 
     // Update is called once per frame
     void Update()
@@ -40,13 +55,21 @@ public class SpawnSwitches : MonoBehaviour
 		// Only do light logic whil the lights are on
 		if(on) LightLogic();
 
+		// Flicker active lights
 		foreach(int index in spawnedSwitches){
-			SpawnPoints[index].transform.GetChild(1).GetComponent<Lamp>().flicker();
+			// If the light is still activateable, flicker the light over it
+			if(!activatedSwitches.Contains(SpawnPoints[index].transform.GetChild(0).transform)) // child 0 is switch model
+				SpawnPoints[index].transform.GetChild(1).GetComponent<Lamp>().flicker(); // child 1 is lamp model
+			// If the light is not activatedable, then make sure the lights state is synced with the rest of the lights
+			else
+				SpawnPoints[index].transform.GetChild(1).GetComponent<Lamp>().stopFlicker(); // child 1 is lamp model
 		}
     }
 
 	// This function preforms all of the needed logic when a switch is activated
 	public void Acivated(Transform hit){
+		if(activatedSwitches.Contains(hit)) return; // If the switch has already been used... then skip the rest of the function
+
 		on = true;
 		foreach (Lamp lamp in lights.GetComponentsInChildren<Lamp>())
 			lamp.setEnabled(true);
@@ -55,6 +78,11 @@ public class SpawnSwitches : MonoBehaviour
 		BatterySpawn.inst.Respawn();
 		// Rearange the doors
 		DoorSpawner.inst.Respawn();
+
+		// Add the current switch to the queue of used switches
+		activatedSwitches.Enqueue(hit);
+		// If there are more switches in the queue than the maximum, start removing switches from the queue.
+		while(activatedSwitches.Count > switchesBetweenUse) activatedSwitches.Dequeue();
 	}
 
 	// Function which determines if the provided switch spawn point has line of sight to any other spawned switch
