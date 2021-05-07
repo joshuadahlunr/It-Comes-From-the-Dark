@@ -51,7 +51,8 @@ public class SpawnSwitches : MonoBehaviour
 				foreach(Collider thing in thingsInBounds){
 					if(thing.tag == "Player"){
 						on = true;
-						lights.SetActive(true);
+						foreach (Lamp lamp in lights.GetComponentsInChildren<Lamp>())
+							lamp.setEnabled(true);
                         switchSource.Play();
 						// Add batteries to the level to replace the ones the player picked up in the last cycle
 						BatterySpawn.inst.Respawn();
@@ -102,7 +103,8 @@ public class SpawnSwitches : MonoBehaviour
 		// If the specified time has passed turn off the lights
 		if(timer > timeOn){
 			on = false;
-			lights.SetActive(false);
+			foreach (Lamp lamp in lights.GetComponentsInChildren<Lamp>())
+				lamp.setEnabled(false);
             offSource.Play();
 			timer = 0;
 		}
