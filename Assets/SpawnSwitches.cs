@@ -7,8 +7,7 @@ public class SpawnSwitches : MonoBehaviour
 	public static SpawnSwitches inst; // Singleton object
 
     public GameObject[] SpawnPoints;
-    public GameObject Switches;
-    public GameObject SwitchLight;
+    public GameObject switchPrefab;
 
     public GameObject lights;
 
@@ -19,8 +18,6 @@ public class SpawnSwitches : MonoBehaviour
     public float timeOn = 30;
 
     public bool on = true;
-
-    //SphereCollider switchCollider;
 
 	void Awake(){
 		inst = this; // Setup singleton
@@ -42,6 +39,10 @@ public class SpawnSwitches : MonoBehaviour
     {
 		// Only do light logic whil the lights are on
 		if(on) LightLogic();
+
+		foreach(int index in spawnedSwitches){
+			SpawnPoints[index].transform.GetChild(1).GetComponent<Lamp>().flicker();
+		}
     }
 
 	// This function preforms all of the needed logic when a switch is activated
@@ -59,13 +60,16 @@ public class SpawnSwitches : MonoBehaviour
 	// Function which determines if the provided switch spawn point has line of sight to any other spawned switch
 	bool inLineofSightofAny(int spawnIndex){
 		RaycastHit hit;
-		foreach(int i in spawnedSwitches)
+		foreach(int i in spawnedSwitches){
 			// Cast a ray from the spawn location in the direction of each other spawn point
-			if(Physics.Raycast(SpawnPoints[spawnIndex].transform.position, SpawnPoints[i].transform.position - SpawnPoints[spawnIndex].transform.position, out hit, 20)){
+			Vector3 direction = SpawnPoints[i].transform.position - SpawnPoints[spawnIndex].transform.position; direction.z = 0; // Make sure the direction has no vertical component
+			if(Physics.Raycast(SpawnPoints[spawnIndex].transform.position + /*Actual height of switch*/new Vector3(0, 1.368f, 0), direction, out hit, 20)){
+				Debug.DrawLine(SpawnPoints[spawnIndex].transform.position + /*Actual height of switch*/new Vector3(0, 1.368f, 0), hit.point, Color.red, 30);
 				// If it hits a switch, then we are in line of sight
 				if(hit.transform.tag == "Switch")
 					return true;
 			}
+		}
 		// If we didn't hit any swicthes then we are not in line of sight
 		return false;
 	}
@@ -78,13 +82,9 @@ public class SpawnSwitches : MonoBehaviour
         spawnedSwitches.Add(spawnIndex);
 
 		// Update the spawn point to now reference the instantiated switch!
-        SpawnPoints[spawnIndex] = Instantiate(Switches, SpawnPoints[spawnIndex].transform.position, SpawnPoints[spawnIndex].transform.rotation, SpawnPoints[spawnIndex].transform);
-        SpawnPoints[spawnIndex] = Instantiate(SwitchLight, SpawnPoints[spawnIndex].transform.position, SpawnPoints[spawnIndex].transform.rotation, SpawnPoints[spawnIndex].transform);
-		// TODO: This isn't currently used... but it will probably be usefull with a better solution to the "is the player interacting with switch" problem.
-		SphereCollider switchCollider = SpawnPoints[spawnIndex].AddComponent<SphereCollider>() as SphereCollider; // create appropriate collider
-        switchCollider.radius = .2f; // make the collider larger so player can interact
-		switchCollider.isTrigger = true; // make the collider not collide but just register that the player is inside of it
-		switchCollider.tag = "Switch"; // mark the collider as a switch
+        SpawnPoints[spawnIndex] = Instantiate(switchPrefab, SpawnPoints[spawnIndex].transform.position, Quaternion.identity, SpawnPoints[spawnIndex].transform);
+		SpawnPoints[spawnIndex].transform.localRotation = SpawnPoints[spawnIndex].transform.rotation;
+		// NOTE: In order for the lights to be correctly oriented the blue local vector needs to be facing right along the wall, and from top orthographic view the point needs to be lined up with the outermost line of the wall.
     }
 
     float timer = 0; // TODO... we have a game timer score, we could use that instead?
