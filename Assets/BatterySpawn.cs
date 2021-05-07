@@ -24,26 +24,14 @@ public class BatterySpawn : MonoBehaviour
 		Respawn();
     }
 
-	void Update(){
-		// For each switch check if the player is interacting with it!
-		if (Input.GetKeyUp(KeyCode.E)){
-			foreach (Transform child in transform){
-				// TODO: This isn't a great solution... but I'm tired (it can be made a lot better!)
-				Collider[] thingsInBounds = Physics.OverlapSphere(child.position, 1.5f);
-				foreach(Collider thing in thingsInBounds){
-					// If the player is close to the battery and pressing E
-					if(thing.tag == "Player"){
-						// If we aren't full on battery charge, destroy the battery so we can't pick it up again
-						if(CharacterControl.inst.batteryCharge < 99.99999f){
-							Destroy(child.gameObject);
-							pickupSource.Play(); // Also play a sound to indicate that the battery was picked up
-						}
-						// Add one to the battery charge (making sure its not greater than the maximum)
-						CharacterControl.inst.batteryCharge = Mathf.Clamp(CharacterControl.inst.batteryCharge + 1, 0, 99.99999f);
-					}
-				}
-			}
+	public void Activated(Transform hit){
+		// If we aren't full on battery charge, destroy the battery so we can't pick it up again
+		if(CharacterControl.inst.batteryCharge < 99.99999f){
+			Destroy(hit.gameObject);
+			pickupSource.Play(); // Also play a sound to indicate that the battery was picked up
 		}
+		// Add one to the battery charge (making sure its not greater than the maximum)
+		CharacterControl.inst.batteryCharge = Mathf.Clamp(CharacterControl.inst.batteryCharge + 1, 0, 99.99999f);
 	}
 
 	// Makes sure that there are at least 30 batteries on the map.

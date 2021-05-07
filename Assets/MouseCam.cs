@@ -37,6 +37,8 @@ public class MouseCam : MonoBehaviour
 	float displacement = 0;
 	// Variable which prevents footsteps from playing too frequently
 	bool canPlayFootstepAgain = true;
+	// Variable storing raycast hits
+	RaycastHit hit;
 
     // Update is called once per frame
     void Update()
@@ -70,6 +72,18 @@ public class MouseCam : MonoBehaviour
 			canPlayFootstepAgain = false; // And mark that we can't play another footstep for a while
 		// Once we have dropped below 0, it is fine to play another footstep
 		} else if (heightModulation < 0) canPlayFootstepAgain = true;
+
+		// Preform a raycast in the direction the player is looking (while the E key is pressed)
+		if (Input.GetKeyUp(KeyCode.E))
+			if(Physics.Raycast(transform.position, transform.forward, out hit, 3)){
+				// If we hit a switch, preform the logic for the turning on the lights
+				if(hit.transform.tag == "Switch")
+					SpawnSwitches.inst.Acivated(hit.transform);
+				// If we hit a battery, preform the logic for picking it up
+				else if(hit.transform.tag == "Battery")
+					BatterySpawn.inst.Activated(hit.transform);
+
+			}
 
 		positionLastFrame = transform.position;
     }

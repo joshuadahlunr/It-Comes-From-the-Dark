@@ -42,27 +42,19 @@ public class SpawnSwitches : MonoBehaviour
     {
 		// Only do light logic whil the lights are on
 		if(on) LightLogic();
-
-		// For each switch check if the player is interacting with it!
-		if (Input.GetKeyUp(KeyCode.E)){
-	        for (int i = 0; i < numSwitches; i++){
-				// TODO: This isn't a great solution... but I'm tired (it can be made a lot better!)
-				Collider[] thingsInBounds = Physics.OverlapSphere(SpawnPoints[spawnedSwitches[i]].transform.position, 1);
-				foreach(Collider thing in thingsInBounds){
-					if(thing.tag == "Player"){
-						on = true;
-						foreach (Lamp lamp in lights.GetComponentsInChildren<Lamp>())
-							lamp.setEnabled(true);
-                        switchSource.Play();
-						// Add batteries to the level to replace the ones the player picked up in the last cycle
-						BatterySpawn.inst.Respawn();
-						// Rearange the doors
-						DoorSpawner.inst.Respawn();
-					}
-				}
-			}
-		}
     }
+
+	// This function preforms all of the needed logic when a switch is activated
+	public void Acivated(Transform hit){
+		on = true;
+		foreach (Lamp lamp in lights.GetComponentsInChildren<Lamp>())
+			lamp.setEnabled(true);
+        switchSource.Play();
+		// Add batteries to the level to replace the ones the player picked up in the last cycle
+		BatterySpawn.inst.Respawn();
+		// Rearange the doors
+		DoorSpawner.inst.Respawn();
+	}
 
 	// Function which determines if the provided switch spawn point has line of sight to any other spawned switch
 	bool inLineofSightofAny(int spawnIndex){
