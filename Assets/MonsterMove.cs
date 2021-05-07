@@ -48,9 +48,6 @@ public class MonsterMove : MonoBehaviour {
             Debug.LogError("This script must be attached to an object with a NavMeshAgent attached! Not found on: " + gameObject.name);
     }
 
-	// Variable which tracks total time for wiggling
-	float x = 0;
-
     /// <summary>
     /// This function handles the calculations which need to be handled every frame.
     /// It manages a coroutine which handles moving the monster through doors.
@@ -62,8 +59,7 @@ public class MonsterMove : MonoBehaviour {
             StartCoroutine(MoveAcrossDoorLink());
 
 		// Wiggle the monster around a little as time goes by
-		x += Time.deltaTime;
-		wiggler.transform.localPosition = new Vector3(.2f * Mathf.Sin(.25f * x), .5f * (Mathf.Sin(.10f * x) + .2f * Mathf.Sin(.60f * x) - .2f * Mathf.Sin(.30f * x)), 0);
+		wiggler.transform.localPosition = new Vector3(.2f * Mathf.Sin(.25f * Time.time), .5f * (Mathf.Sin(.10f * Time.time) + .2f * Mathf.Sin(.60f * Time.time) - .2f * Mathf.Sin(.30f * Time.time)), 0);
 
 		// Update velocity
 		velocity = (transform.position - positionLastFrame) / Time.deltaTime;

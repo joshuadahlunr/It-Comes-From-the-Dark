@@ -22,6 +22,7 @@ public class SpawnSwitches : MonoBehaviour
     public int numSwitches = 5;
 	// The time lights will remain on
     public float timeOn = 30;
+	public float minTimeOn = 10;
 
 	// Variable representing if the lights are on or off
     public bool on = true;
@@ -78,6 +79,8 @@ public class SpawnSwitches : MonoBehaviour
 		BatterySpawn.inst.Respawn();
 		// Rearange the doors
 		DoorSpawner.inst.Respawn();
+		// Each time a switch gets flipped, the difficulty increases (you can flip switches while the lights are on to make the game even harder)
+		DifficulyIncrease.inst.increaseDifficulty();
 
 		// Add the current switch to the queue of used switches
 		activatedSwitches.Enqueue(hit);
