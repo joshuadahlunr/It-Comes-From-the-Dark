@@ -67,6 +67,6 @@ public class DeathMenu : MonoBehaviour
 
     void OnQuitClick()
     {
-        Application.Quit();
+        Utility.quit();
     }
 }

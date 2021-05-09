@@ -44,6 +44,6 @@ public class MainMenu : MonoBehaviour
 
     void OnQuitClick()
     {
-        Application.Quit();
+        Utility.quit();
     }
 }
