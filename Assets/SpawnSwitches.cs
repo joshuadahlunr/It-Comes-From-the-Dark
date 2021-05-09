@@ -80,7 +80,7 @@ public class SpawnSwitches : MonoBehaviour
 		// Rearange the doors
 		DoorSpawner.inst.Respawn();
 		// Each time a switch gets flipped, the difficulty increases (you can flip switches while the lights are on to make the game even harder)
-		DifficulyIncrease.inst.increaseDifficulty();
+		GameplayManager.inst.increaseDifficulty();
 
 		// Add the current switch to the queue of used switches
 		activatedSwitches.Enqueue(hit);
