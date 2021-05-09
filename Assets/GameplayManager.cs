@@ -21,7 +21,7 @@ public class GameplayManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+		Cursor.lockState = CursorLockMode.Locked;
     }
 
     // Update is called once per frame
@@ -31,12 +31,14 @@ public class GameplayManager : MonoBehaviour
         dist = Vector3.Distance(CharacterControl.inst.transform.position, MonsterMove.inst.transform.position);
         if(dist < deathDist)
         {
+			Cursor.lockState = CursorLockMode.None;
             DeathMenu.inst.gameObject.SetActive(true);
 			DeathMenu.inst.pauseTimer = true;
 			gameOver = true;
         }
 
 		else if(Input.GetKeyDown(KeyCode.Escape)){
+			Cursor.lockState = CursorLockMode.None;
 			DeathMenu.inst.gameObject.SetActive(true);
 			DeathMenu.inst.pauseTimer = false;
 		}
