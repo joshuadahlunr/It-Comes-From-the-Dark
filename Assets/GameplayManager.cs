@@ -22,6 +22,7 @@ public class GameplayManager : MonoBehaviour
     void Start()
     {
 		Cursor.lockState = CursorLockMode.Locked;
+		Cursor.visible = false;
     }
 
     // Update is called once per frame
@@ -32,6 +33,7 @@ public class GameplayManager : MonoBehaviour
         if(dist < deathDist)
         {
 			Cursor.lockState = CursorLockMode.None;
+			Cursor.visible = true;
             DeathMenu.inst.gameObject.SetActive(true);
 			DeathMenu.inst.pauseTimer = true;
 			gameOver = true;
@@ -39,6 +41,7 @@ public class GameplayManager : MonoBehaviour
 
 		else if(Input.GetKeyDown(KeyCode.Escape)){
 			Cursor.lockState = CursorLockMode.None;
+			Cursor.visible = true;
 			DeathMenu.inst.gameObject.SetActive(true);
 			DeathMenu.inst.pauseTimer = false;
 		}
