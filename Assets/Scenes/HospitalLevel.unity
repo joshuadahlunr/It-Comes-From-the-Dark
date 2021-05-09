@@ -12260,9 +12260,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameOver: 0
-  player: {fileID: 266383787}
-  monster: {fileID: 932668886}
-  deathScreen: {fileID: 2056196421}
   deathDist: 1
 --- !u!1 &483817610
 GameObject:
@@ -46735,7 +46732,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &2056196422
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -46831,7 +46828,7 @@ MonoBehaviour:
   returnMenuButton: {fileID: 2068422395}
   quitGameButton: {fileID: 111087957}
   timeText: {fileID: 20707161}
-  gpManager: {fileID: 474508998}
+  pauseTimer: 0
 --- !u!1001 &2057978307
 PrefabInstance:
   m_ObjectHideFlags: 0

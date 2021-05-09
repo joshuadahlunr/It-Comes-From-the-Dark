@@ -6,14 +6,11 @@ public class GameplayManager : MonoBehaviour
 {
     public static GameplayManager inst; // Singleton object
 
-    public bool gameOver;
+    public bool gameOver = false;
 
     float dist;
     float timePassed = 0;
 
-    public GameObject player;
-    public GameObject monster;
-    public GameObject deathScreen;
     public int deathDist;
 
     void Awake()
@@ -24,18 +21,25 @@ public class GameplayManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
         timePassed += Time.deltaTime;
-        dist = Vector3.Distance(player.transform.position, monster.transform.position);
+        dist = Vector3.Distance(CharacterControl.inst.transform.position, MonsterMove.inst.transform.position);
         if(dist < deathDist)
         {
-            deathScreen.SetActive(true);
+            DeathMenu.inst.gameObject.SetActive(true);
+			DeathMenu.inst.pauseTimer = true;
+			gameOver = true;
         }
+
+		else if(Input.GetKeyDown(KeyCode.Escape)){
+			DeathMenu.inst.gameObject.SetActive(true);
+			DeathMenu.inst.pauseTimer = false;
+		}
     }
 
     public float getDist() { return dist; }

@@ -6,21 +6,26 @@ using UnityEngine.SceneManagement;
 
 public class DeathMenu : MonoBehaviour
 {
-    // Start is called before the first frame update
+    // Setup singleton
+	public static DeathMenu inst;
+	void Awake() {
+		inst = this;
+	}
 
     public Button returnMenuButton;
     public Button quitGameButton;
     public Text timeText;
 
-    public GameplayManager gpManager;
+	public bool pauseTimer = true;
+
+	void Start() {
+		// Disable menu at the start of the game
+		gameObject.SetActive(false);
+	}
 
 
-    void OnEnable()
-    {
-        returnMenuButton.onClick.AddListener(OnReturnClick);
-        quitGameButton.onClick.AddListener(OnQuitClick);
-
-        float timePassed = gpManager.getTime();
+	void updateTime() {
+		float timePassed = GameplayManager.inst.getTime();
         //timePanel.text = timePassed.ToString();
 
         string hours = ((int)timePassed / 3600).ToString();
@@ -34,12 +39,24 @@ public class DeathMenu : MonoBehaviour
         ms = (int.Parse(ms) < 10 ? "0" + ms : ms);
 
         timeText.text = hours + ":" + minutes + ":" + seconds + ":" + ms;
+	}
+
+
+    void OnEnable()
+    {
+        returnMenuButton.onClick.AddListener(OnReturnClick);
+        quitGameButton.onClick.AddListener(OnQuitClick);
+
+        updateTime();
     }
 
     // Update is called once per frame
     void Update()
     {
+		if(!pauseTimer) updateTime();
 
+		if(!pauseTimer && Input.GetKeyDown(KeyCode.Escape))
+			gameObject.SetActive(false);
 
     }
 
